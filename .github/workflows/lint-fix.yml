@@ -1,41 +1,26 @@
-name: Lint Fix Pipeline
+# Lint Fix Pipeline Configuration
+
+name: Lint Fix
 
 on:
-  workflow_dispatch: # Manuální spuštění pipeline
+  push:
+    branches:
+      - main
 
 jobs:
-  lint-fix:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run lint fix
-      run: npm run lint -- --fix
-
-    - name: Check for unstaged changes
-      id: git-status
-      run: |
-        git config --global user.name "GitHub Actions Bot"
-        git config --global user.email "actions@github.com"
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "has_changes=true" >> $GITHUB_ENV
-        else
-          echo "has_changes=false" >> $GITHUB_ENV
-        fi
-
-    - name: Commit and push changes
-      if: env.has_changes == 'true'
-      run: |
-        git add .
-        git commit -m "Apply lint fixes via GitHub Actions"
-        git push
+      - name: Run Lint Fix
+        run: npm run lint -- --fix
