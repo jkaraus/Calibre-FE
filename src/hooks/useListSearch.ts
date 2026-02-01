@@ -1,38 +1,38 @@
-import { useMemo } from 'react'
-import { useDebounced } from './useDebounced'
-import { useProgressiveLoading } from './useProgressiveLoading'
+import { useMemo } from "react";
+import { useDebounced } from "./useDebounced";
+import { useProgressiveLoading } from "./useProgressiveLoading";
 
 interface UseListSearchProps<T> {
   /** Zdrojová data pro vyhledávání */
-  items: T[] | undefined
+  items: T[] | undefined;
   /** Aktuální vyhledávací termín */
-  searchTerm: string
+  searchTerm: string;
   /** Funkce pro filtrování položek */
-  filterFn: (item: T, searchTerm: string) => boolean
+  filterFn: (item: T, searchTerm: string) => boolean;
   /** Funkce pro řazení položek (nepovinné) */
-  sortFn?: (a: T, b: T) => number
+  sortFn?: (a: T, b: T) => number;
   /** Nastavení progressive loading */
   progressiveLoading?: {
-    pageSize?: number
-    initialDisplayCount?: number
-    enableInfiniteScroll?: boolean
-  }
+    pageSize?: number;
+    initialDisplayCount?: number;
+    enableInfiniteScroll?: boolean;
+  };
 }
 
 interface UseListSearchReturn<T> {
   /** Filtrované a stránkované položky */
-  filteredItems: T[] | undefined
+  filteredItems: T[] | undefined;
   /** Celkový počet nalezených položek */
-  totalCount: number
+  totalCount: number;
   /** Debounced vyhledávací termín */
-  debouncedSearchTerm: string
+  debouncedSearchTerm: string;
   /** Progressive loading hook hodnoty */
   progressiveLoading: {
-    displayCount: number
-    isLoadingMore: boolean
-    handleLoadMore: () => Promise<void>
-    hasMore: boolean
-  }
+    displayCount: number;
+    isLoadingMore: boolean;
+    handleLoadMore: () => Promise<void>;
+    hasMore: boolean;
+  };
 }
 
 /**
@@ -50,31 +50,33 @@ export const useListSearch = <T>({
     pageSize = 48,
     initialDisplayCount = 20,
     enableInfiniteScroll = true,
-  } = progressiveLoading
+  } = progressiveLoading;
 
   // Debounced search term
-  const debouncedSearchTerm = useDebounced(searchTerm, 150)
+  const debouncedSearchTerm = useDebounced(searchTerm, 150);
 
   // Filtrování a řazení
   const processedItems = useMemo(() => {
     if (!items) {
-      return { filtered: undefined, totalCount: 0 }
+      return { filtered: undefined, totalCount: 0 };
     }
 
-    let result = items
+    let result = items;
 
     // Filtrování podle search term
     if (debouncedSearchTerm.trim()) {
-      result = items.filter(item => filterFn(item, debouncedSearchTerm.toLowerCase()))
+      result = items.filter((item) =>
+        filterFn(item, debouncedSearchTerm.toLowerCase()),
+      );
     }
 
     // Řazení pokud je definováno
     if (sortFn) {
-      result = [...result].sort(sortFn)
+      result = [...result].sort(sortFn);
     }
 
-    return { filtered: result, totalCount: result.length }
-  }, [items, debouncedSearchTerm, filterFn, sortFn])
+    return { filtered: result, totalCount: result.length };
+  }, [items, debouncedSearchTerm, filterFn, sortFn]);
 
   // Progressive loading
   const progressiveLoadingHook = useProgressiveLoading({
@@ -83,21 +85,24 @@ export const useListSearch = <T>({
     initialDisplayCount,
     enableInfiniteScroll,
     resetDeps: [debouncedSearchTerm],
-  })
+  });
 
   // Stránkování výsledků
   const paginatedItems = useMemo(() => {
     if (!processedItems.filtered) {
-      return undefined
+      return undefined;
     }
 
-    return processedItems.filtered.slice(0, progressiveLoadingHook.displayCount)
-  }, [processedItems.filtered, progressiveLoadingHook.displayCount])
+    return processedItems.filtered.slice(
+      0,
+      progressiveLoadingHook.displayCount,
+    );
+  }, [processedItems.filtered, progressiveLoadingHook.displayCount]);
 
   return {
     filteredItems: paginatedItems,
     totalCount: processedItems.totalCount,
     debouncedSearchTerm,
     progressiveLoading: progressiveLoadingHook,
-  }
-}
+  };
+};

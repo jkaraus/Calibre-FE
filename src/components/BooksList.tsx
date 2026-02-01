@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -11,24 +11,24 @@ import {
   Typography,
   CircularProgress,
   Alert,
-} from '@mui/material'
+} from "@mui/material";
 import {
   Person as PersonIcon,
   DateRange as DateIcon,
   Language as LanguageIcon,
-} from '@mui/icons-material'
-import type { Book } from '../types/book'
+} from "@mui/icons-material";
+import type { Book } from "../types/book";
 
 interface BooksListProps {
-  books?: Book[]
-  isLoading: boolean
-  error?: Error | null
-  showLanguage?: boolean
-  maxDescriptionLength?: number
-  maxTags?: number
-  showFullComment?: boolean
-  onSeriesClick?: (authorId: number, seriesName: string) => void
-  onAuthorClick?: (authorId: number, authorName: string) => void
+  books?: Book[];
+  isLoading: boolean;
+  error?: Error | null;
+  showLanguage?: boolean;
+  maxDescriptionLength?: number;
+  maxTags?: number;
+  showFullComment?: boolean;
+  onSeriesClick?: (authorId: number, seriesName: string) => void;
+  onAuthorClick?: (authorId: number, authorName: string) => void;
 }
 
 const BooksList: React.FC<BooksListProps> = ({
@@ -42,40 +42,44 @@ const BooksList: React.FC<BooksListProps> = ({
   onSeriesClick,
   onAuthorClick,
 }) => {
-  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set())
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(
+    new Set(),
+  );
 
   const toggleComment = (bookId: number) => {
-    setExpandedComments(prev => {
-      const newSet = new Set(prev)
+    setExpandedComments((prev) => {
+      const newSet = new Set(prev);
       if (newSet.has(bookId)) {
-        newSet.delete(bookId)
+        newSet.delete(bookId);
       } else {
-        newSet.add(bookId)
+        newSet.add(bookId);
       }
-      return newSet
-    })
-  }
+      return newSet;
+    });
+  };
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Neznámé'
-    return new Intl.DateTimeFormat('cs-CZ', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(new Date(dateString))
-  }
+    if (!dateString) {return "Neznámé";}
+    return new Intl.DateTimeFormat("cs-CZ", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(new Date(dateString));
+  };
 
   const truncateText = (text: string | null | undefined, maxLength: number) => {
-    if (!text) return ''
-    const plainText = text.replace(/<[^>]*>/g, '')
-    return plainText.length <= maxLength ? plainText : `${plainText.slice(0, maxLength)}...`
-  }
+    if (!text) {return "";}
+    const plainText = text.replace(/<[^>]*>/g, "");
+    return plainText.length <= maxLength
+      ? plainText
+      : `${plainText.slice(0, maxLength)}...`;
+  };
 
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" py={4}>
         <CircularProgress />
       </Box>
-    )
+    );
   }
 
   if (error) {
@@ -83,7 +87,7 @@ const BooksList: React.FC<BooksListProps> = ({
       <Alert severity="error" sx={{ mb: 3 }}>
         Chyba při načítání knih: {error.message}
       </Alert>
-    )
+    );
   }
 
   if (!books || books.length === 0) {
@@ -93,69 +97,90 @@ const BooksList: React.FC<BooksListProps> = ({
           Žádné knihy nebyly nalezeny.
         </Typography>
       </Box>
-    )
+    );
   }
 
   return (
     <Grid container spacing={3}>
       {books.map((book) => (
         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={book.id}>
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
+          <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
             {book.hasCover && (
               <CardMedia
                 component="img"
-                sx={{ 
+                sx={{
                   width: 140,
                   height: 210,
-                  objectFit: 'cover', 
-                  bgcolor: 'grey.100',
+                  objectFit: "cover",
+                  bgcolor: "grey.100",
                   flexShrink: 0,
                   m: 2,
-                  borderRadius: 2
+                  borderRadius: 2,
                 }}
                 image={`/api/book/cover/${book.id}`}
                 alt={`Cover obrázek pro ${book.title}`}
               />
             )}
-            <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", width: "100%" }}
+            >
               <CardContent sx={{ flexGrow: 1, p: 1.5 }}>
                 <Typography variant="h6" component="h3" sx={{ mb: 0.5 }}>
                   {book.title}
                 </Typography>
                 {book.seriesName && (
-                  <Typography 
-                    variant="subtitle2" 
-                    color="primary" 
-                    sx={{ 
+                  <Typography
+                    variant="subtitle2"
+                    color="primary"
+                    sx={{
                       mb: 0.5,
-                      cursor: onSeriesClick ? 'pointer' : 'default',
-                      textDecoration: onSeriesClick ? 'underline' : 'none',
-                      '&:hover': onSeriesClick ? {
-                        backgroundColor: 'action.hover',
-                      } : {}
+                      cursor: onSeriesClick ? "pointer" : "default",
+                      textDecoration: onSeriesClick ? "underline" : "none",
+                      "&:hover": onSeriesClick
+                        ? {
+                          backgroundColor: "action.hover",
+                        }
+                        : {},
                     }}
-                    onClick={() => onSeriesClick && book.authors.length > 0 && onSeriesClick(book.authors[0].id, book.seriesName || '')}
+                    onClick={() =>
+                      onSeriesClick &&
+                      book.authors.length > 0 &&
+                      onSeriesClick(book.authors[0].id, book.seriesName || "")
+                    }
                   >
                     {book.seriesName} {book.seriesNumber}
                   </Typography>
                 )}
-                
+
                 <Box sx={{ mb: 0.5 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.25 }}>
-                    <PersonIcon sx={{ mr: 1, fontSize: 'small' }} />
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 0.25 }}>
+                    <PersonIcon sx={{ mr: 1, fontSize: "small" }} />
                     <Typography variant="body2">
                       {book.authors.map((author, index) => (
                         <React.Fragment key={author.id}>
-                          {index > 0 && ', '}
-                          <span 
-                            style={{ 
-                              cursor: onAuthorClick ? 'pointer' : 'default',
-                              textDecoration: onAuthorClick ? 'underline' : 'none',
-                              color: onAuthorClick ? 'primary.main' : 'inherit'
+                          {index > 0 && ", "}
+                          <span
+                            style={{
+                              cursor: onAuthorClick ? "pointer" : "default",
+                              textDecoration: onAuthorClick
+                                ? "underline"
+                                : "none",
+                              color: onAuthorClick ? "primary.main" : "inherit",
                             }}
-                            onClick={() => onAuthorClick && onAuthorClick(author.id, author.name)}
-                            onMouseEnter={(e) => onAuthorClick && ((e.target as HTMLElement).style.backgroundColor = 'rgba(0, 0, 0, 0.04)')}
-                            onMouseLeave={(e) => onAuthorClick && ((e.target as HTMLElement).style.backgroundColor = 'transparent')}
+                            onClick={() =>
+                              onAuthorClick &&
+                              onAuthorClick(author.id, author.name)
+                            }
+                            onMouseEnter={(e) =>
+                              onAuthorClick &&
+                              ((e.target as HTMLElement).style.backgroundColor =
+                                "rgba(0, 0, 0, 0.04)")
+                            }
+                            onMouseLeave={(e) =>
+                              onAuthorClick &&
+                              ((e.target as HTMLElement).style.backgroundColor =
+                                "transparent")
+                            }
                           >
                             {author.name}
                           </span>
@@ -163,10 +188,12 @@ const BooksList: React.FC<BooksListProps> = ({
                       ))}
                     </Typography>
                   </Box>
-                  
+
                   {book.publishDate && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.25 }}>
-                      <DateIcon sx={{ mr: 1, fontSize: 'small' }} />
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", mb: 0.25 }}
+                    >
+                      <DateIcon sx={{ mr: 1, fontSize: "small" }} />
                       <Typography variant="body2">
                         {formatDate(book.publishDate)}
                       </Typography>
@@ -174,9 +201,14 @@ const BooksList: React.FC<BooksListProps> = ({
                   )}
 
                   {showLanguage && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.25 }}>
-                      <LanguageIcon sx={{ mr: 1, fontSize: 'small' }} />
-                      <Typography variant="body2" sx={{ textTransform: 'uppercase' }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", mb: 0.25 }}
+                    >
+                      <LanguageIcon sx={{ mr: 1, fontSize: "small" }} />
+                      <Typography
+                        variant="body2"
+                        sx={{ textTransform: "uppercase" }}
+                      >
                         {book.language}
                       </Typography>
                     </Box>
@@ -186,24 +218,33 @@ const BooksList: React.FC<BooksListProps> = ({
                 {book.comments && (
                   <Box sx={{ mb: 0.5 }}>
                     {showFullComment || expandedComments.has(book.id) ? (
-                      <Typography 
-                        variant="body2" 
-                        color="text.secondary" 
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
                         paragraph
                         dangerouslySetInnerHTML={{ __html: book.comments }}
                       />
                     ) : (
-                      <Typography variant="body2" color="text.secondary" paragraph>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        paragraph
+                      >
                         {truncateText(book.comments, maxDescriptionLength)}
                       </Typography>
                     )}
-                    {!showFullComment && book.comments && book.comments.replace(/<[^>]*>/g, '').length > maxDescriptionLength && (
-                      <Button 
-                        size="small" 
+                    {!showFullComment &&
+                      book.comments &&
+                      book.comments.replace(/<[^>]*>/g, "").length >
+                        maxDescriptionLength && (
+                      <Button
+                        size="small"
                         onClick={() => toggleComment(book.id)}
-                        sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                        sx={{ p: 0, minWidth: "auto", textTransform: "none" }}
                       >
-                        {expandedComments.has(book.id) ? 'Zobrazit méně' : 'Zobrazit více'}
+                        {expandedComments.has(book.id)
+                          ? "Zobrazit méně"
+                          : "Zobrazit více"}
                       </Button>
                     )}
                   </Box>
@@ -221,7 +262,8 @@ const BooksList: React.FC<BooksListProps> = ({
                     ))}
                     {book.tags.length > maxTags && (
                       <Typography variant="caption" color="text.secondary">
-                        +{book.tags.length - maxTags} {maxTags === 2 ? '' : 'dalších'}
+                        +{book.tags.length - maxTags}{" "}
+                        {maxTags === 2 ? "" : "dalších"}
                       </Typography>
                     )}
                   </Box>
@@ -229,7 +271,7 @@ const BooksList: React.FC<BooksListProps> = ({
               </CardContent>
 
               <CardActions>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                   {book.formats.map((format) => (
                     <Button
                       key={format.id}
@@ -249,7 +291,7 @@ const BooksList: React.FC<BooksListProps> = ({
         </Grid>
       ))}
     </Grid>
-  )
-}
+  );
+};
 
-export default React.memo(BooksList)
+export default React.memo(BooksList);

@@ -1,30 +1,30 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
 interface AppState {
   // UI state
-  isLoading: boolean
-  setIsLoading: (loading: boolean) => void
-  
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+
   // Theme state
-  isDarkMode: boolean
-  toggleTheme: () => void
-  
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+
   // Global notifications
-  notification: string | null
-  setNotification: (message: string | null) => void
-  
+  notification: string | null;
+  setNotification: (message: string | null) => void;
+
   // Search terms persistence
-  booksSearchTerm: string
-  setBooksSearchTerm: (term: string) => void
-  authorsSearchTerm: string
-  setAuthorsSearchTerm: (term: string) => void
-  
+  booksSearchTerm: string;
+  setBooksSearchTerm: (term: string) => void;
+  authorsSearchTerm: string;
+  setAuthorsSearchTerm: (term: string) => void;
+
   // Scroll position preservation
-  booksScrollPosition: number
-  setBooksScrollPosition: (position: number) => void
-  authorsScrollPosition: number
-  setAuthorsScrollPosition: (position: number) => void
+  booksScrollPosition: number;
+  setBooksScrollPosition: (position: number) => void;
+  authorsScrollPosition: number;
+  setAuthorsScrollPosition: (position: number) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -34,35 +34,47 @@ export const useAppStore = create<AppState>()(
       isLoading: false,
       isDarkMode: false,
       notification: null,
-      booksSearchTerm: '',
-      authorsSearchTerm: '',
+      booksSearchTerm: "",
+      authorsSearchTerm: "",
       booksScrollPosition: 0,
       authorsScrollPosition: 0,
-      
+
       // Actions
       setIsLoading: (loading: boolean) =>
-        set(() => ({ isLoading: loading }), false, 'setIsLoading'),
-      
+        set(() => ({ isLoading: loading }), false, "setIsLoading"),
+
       toggleTheme: () =>
-        set((state) => ({ isDarkMode: !state.isDarkMode }), false, 'toggleTheme'),
-      
+        set(
+          (state) => ({ isDarkMode: !state.isDarkMode }),
+          false,
+          "toggleTheme",
+        ),
+
       setNotification: (message: string | null) =>
-        set(() => ({ notification: message }), false, 'setNotification'),
-      
+        set(() => ({ notification: message }), false, "setNotification"),
+
       setBooksSearchTerm: (term: string) =>
-        set(() => ({ booksSearchTerm: term }), false, 'setBooksSearchTerm'),
-      
+        set(() => ({ booksSearchTerm: term }), false, "setBooksSearchTerm"),
+
       setAuthorsSearchTerm: (term: string) =>
-        set(() => ({ authorsSearchTerm: term }), false, 'setAuthorsSearchTerm'),
-      
+        set(() => ({ authorsSearchTerm: term }), false, "setAuthorsSearchTerm"),
+
       setBooksScrollPosition: (position: number) =>
-        set(() => ({ booksScrollPosition: position }), false, 'setBooksScrollPosition'),
-      
+        set(
+          () => ({ booksScrollPosition: position }),
+          false,
+          "setBooksScrollPosition",
+        ),
+
       setAuthorsScrollPosition: (position: number) =>
-        set(() => ({ authorsScrollPosition: position }), false, 'setAuthorsScrollPosition'),
+        set(
+          () => ({ authorsScrollPosition: position }),
+          false,
+          "setAuthorsScrollPosition",
+        ),
     }),
     {
-      name: 'app-store',
-    }
-  )
-)
+      name: "app-store",
+    },
+  ),
+);

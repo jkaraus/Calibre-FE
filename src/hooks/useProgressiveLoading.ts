@@ -1,29 +1,29 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from "react";
 
 interface UseProgressiveLoadingProps {
   /** Celkový počet dostupných položek */
-  totalItems: number
+  totalItems: number;
   /** Počet položek načtených za jednou (výchozí 48) */
-  pageSize?: number
+  pageSize?: number;
   /** Počáteční počet zobrazených položek (výchozí 20) */
-  initialDisplayCount?: number
+  initialDisplayCount?: number;
   /** Vzdálenost od konce stránky pro spuštění načítání (výchozí 200px) */
-  scrollThreshold?: number
+  scrollThreshold?: number;
   /** Zda je infinite scroll aktivní (výchozí true) */
-  enableInfiniteScroll?: boolean
+  enableInfiniteScroll?: boolean;
   /** Dependencies pro reset displayCount */
-  resetDeps?: any[]
+  resetDeps?: unknown[];
 }
 
 interface UseProgressiveLoadingReturn {
   /** Aktuální počet zobrazených položek */
-  displayCount: number
+  displayCount: number;
   /** Zda probíhá načítání více položek */
-  isLoadingMore: boolean
+  isLoadingMore: boolean;
   /** Funkce pro ruční načtení více položek */
-  handleLoadMore: () => Promise<void>
+  handleLoadMore: () => Promise<void>;
   /** Zda jsou k dispozici další položky */
-  hasMore: boolean
+  hasMore: boolean;
 }
 
 /**
@@ -38,54 +38,74 @@ export const useProgressiveLoading = ({
   enableInfiniteScroll = true,
   resetDeps = [],
 }: UseProgressiveLoadingProps): UseProgressiveLoadingReturn => {
-  const [displayCount, setDisplayCount] = useState(initialDisplayCount)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [displayCount, setDisplayCount] = useState(initialDisplayCount);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Reset displayCount při změně dependencies (např. search term)
-  useEffect(() => {
-    setDisplayCount(initialDisplayCount)
-  }, resetDeps)
+  // Reset displayCount při změně dependencies - používáme flag pro sledování změn
+  const [lastResetDeps, setLastResetDeps] = useState<unknown[]>(resetDeps);
+
+  // Kontrola změn dependencies a reset
+  const depsChanged =
+    resetDeps.some((dep, index) => dep !== lastResetDeps[index]) ||
+    resetDeps.length !== lastResetDeps.length;
+
+  if (depsChanged) {
+    setDisplayCount(initialDisplayCount);
+    setLastResetDeps(resetDeps);
+  }
 
   // Handler pro načtení více položek
   const handleLoadMore = useCallback(async () => {
-    setIsLoadingMore(true)
+    setIsLoadingMore(true);
     // Simulujeme krátké zpoždění pro UX
-    await new Promise(resolve => setTimeout(resolve, 200))
-    setDisplayCount(prev => prev + pageSize)
-    setIsLoadingMore(false)
-  }, [pageSize])
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    setDisplayCount((prev) => prev + pageSize);
+    setIsLoadingMore(false);
+  }, [pageSize]);
 
   // Infinite scroll efekt
   useEffect(() => {
-    if (!enableInfiniteScroll) return
+    if (!enableInfiniteScroll) {
+      return;
+    }
 
     const handleScroll = () => {
-      const scrollTop = window.pageYOffset
-      const windowHeight = window.innerHeight
-      const documentHeight = document.documentElement.scrollHeight
+      const scrollTop = window.pageYOffset;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
 
       // Pokud jsme scrollThreshold px od konce stránky a neloadujeme už
-      if (scrollTop + windowHeight >= documentHeight - scrollThreshold && !isLoadingMore) {
+      if (
+        scrollTop + windowHeight >= documentHeight - scrollThreshold &&
+        !isLoadingMore
+      ) {
         // Kontrola, zda máme ještě co načíst
         if (displayCount < totalItems) {
-          handleLoadMore()
+          handleLoadMore();
         }
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [displayCount, totalItems, isLoadingMore, handleLoadMore, enableInfiniteScroll, scrollThreshold])
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [
+    displayCount,
+    totalItems,
+    isLoadingMore,
+    handleLoadMore,
+    enableInfiniteScroll,
+    scrollThreshold,
+  ]);
 
-  const hasMore = displayCount < totalItems
+  const hasMore = displayCount < totalItems;
 
   return {
     displayCount,
     isLoadingMore,
     handleLoadMore,
     hasMore,
-  }
-}
+  };
+};

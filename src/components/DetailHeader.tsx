@@ -1,23 +1,16 @@
-import React from 'react'
-import {
-  Box,
-  Typography,
-  Divider,
-  IconButton,
-} from '@mui/material'
-import {
-  ArrowBack as ArrowBackIcon,
-} from '@mui/icons-material'
+import React from "react";
+import { Box, Typography, Divider, IconButton } from "@mui/material";
+import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 
 interface DetailHeaderProps {
   /** Titulek (název série, autora, apod.) */
-  title: string
+  title: string;
   /** Popisný text (počet knih, apod.) */
-  description: string
+  description: string;
   /** Callback pro navácení zpět */
-  onBack: () => void
+  onBack: () => void;
   /** Přidatěné paddingu (např. pro Authors stránku) */
-  withPadding?: boolean
+  withPadding?: boolean;
 }
 
 /**
@@ -32,7 +25,7 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({
 }) => {
   return (
     <Box sx={{ mb: 4, ...(withPadding && { px: 2 }) }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <IconButton onClick={onBack} sx={{ mr: 2 }}>
           <ArrowBackIcon />
         </IconButton>
@@ -45,5 +38,5 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({
       </Box>
       <Divider sx={{ mt: 2 }} />
     </Box>
-  )
-}
+  );
+};

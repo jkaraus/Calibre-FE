@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   Container,
   Typography,
@@ -8,20 +8,20 @@ import {
   Chip,
   Stack,
   Button,
-} from '@mui/material'
-import { Link } from '@tanstack/react-router'
+} from "@mui/material";
+import { Link } from "@tanstack/react-router";
 
 const About: React.FC = () => {
   const technologies = [
-    { name: 'Vite', description: 'Rychlý build tool a dev server' },
-    { name: 'React', description: 'UI knihovna pro tvorbu komponent' },
-    { name: 'TypeScript', description: 'Typovaný JavaScript' },
-    { name: 'TanStack React Query', description: 'Server state management' },
-    { name: 'TanStack React Router', description: 'Type-safe routing' },
-    { name: 'Zustand', description: 'Lightweight state management' },
-    { name: 'Material-UI', description: 'React UI component library' },
-    { name: 'Emotion', description: 'CSS-in-JS library' },
-  ]
+    { name: "Vite", description: "Rychlý build tool a dev server" },
+    { name: "React", description: "UI knihovna pro tvorbu komponent" },
+    { name: "TypeScript", description: "Typovaný JavaScript" },
+    { name: "TanStack React Query", description: "Server state management" },
+    { name: "TanStack React Router", description: "Type-safe routing" },
+    { name: "Zustand", description: "Lightweight state management" },
+    { name: "Material-UI", description: "React UI component library" },
+    { name: "Emotion", description: "CSS-in-JS library" },
+  ];
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -42,11 +42,12 @@ const About: React.FC = () => {
           </Typography>
           <Stack spacing={2}>
             {technologies.map((tech) => (
-              <Box key={tech.name} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box
+                key={tech.name}
+                sx={{ display: "flex", alignItems: "center", gap: 2 }}
+              >
                 <Chip label={tech.name} color="primary" />
-                <Typography variant="body2">
-                  {tech.description}
-                </Typography>
+                <Typography variant="body2">{tech.description}</Typography>
               </Box>
             ))}
           </Stack>
@@ -58,16 +59,20 @@ const About: React.FC = () => {
           Funkcionality
         </Typography>
         <Typography variant="body1" paragraph>
-          • <strong>Rychlý vývoj:</strong> Vite poskytuje téměř okamžitý hot reload
+          • <strong>Rychlý vývoj:</strong> Vite poskytuje téměř okamžitý hot
+          reload
         </Typography>
         <Typography variant="body1" paragraph>
-          • <strong>Type Safety:</strong> TypeScript zajišťuje typovou bezpečnost
+          • <strong>Type Safety:</strong> TypeScript zajišťuje typovou
+          bezpečnost
         </Typography>
         <Typography variant="body1" paragraph>
-          • <strong>State Management:</strong> Zustand pro klientský stav, React Query pro server stav
+          • <strong>State Management:</strong> Zustand pro klientský stav, React
+          Query pro server stav
         </Typography>
         <Typography variant="body1" paragraph>
-          • <strong>Modern Routing:</strong> TanStack Router s type-safe navigací
+          • <strong>Modern Routing:</strong> TanStack Router s type-safe
+          navigací
         </Typography>
         <Typography variant="body1" paragraph>
           • <strong>Komponenty:</strong> Material-UI pro konzistentní design
@@ -78,7 +83,7 @@ const About: React.FC = () => {
         Zpět na domovskou stránku
       </Button>
     </Container>
-  )
-}
+  );
+};
 
-export default About
+export default About;

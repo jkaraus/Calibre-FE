@@ -1,32 +1,32 @@
-import React from 'react'
-import { Box } from '@mui/material'
-import BooksList from './BooksList'
-import { DetailHeader } from './DetailHeader'
-import type { Book } from '../types/book'
+import React from "react";
+import { Box } from "@mui/material";
+import BooksList from "./BooksList";
+import { DetailHeader } from "./DetailHeader";
+import type { Book } from "../types/book";
 
 interface DetailViewProps {
   /** Titulek detail view */
-  title: string
+  title: string;
   /** Popisný text */
-  description: string
+  description: string;
   /** Callback pro navácení zpět */
-  onBack: () => void
+  onBack: () => void;
   /** Knihy k zobrazení */
-  books: Book[] | undefined
+  books: Book[] | undefined;
   /** Loading stav */
-  isLoading: boolean
+  isLoading: boolean;
   /** Chyba */
-  error: any
+  error: Error | null;
   /** Přidatěné paddingu pro obsah */
-  withPadding?: boolean
+  withPadding?: boolean;
   /** Props pro BooksList */
   booksListProps?: {
-    showLanguage?: boolean
-    maxDescriptionLength?: number
-    maxTags?: number
-    onSeriesClick?: (authorId: number, seriesName: string) => void
-    onAuthorClick?: (authorId: number, authorName?: string) => void
-  }
+    showLanguage?: boolean;
+    maxDescriptionLength?: number;
+    maxTags?: number;
+    onSeriesClick?: (authorId: number, seriesName: string) => void;
+    onAuthorClick?: (authorId: number, authorName?: string) => void;
+  };
 }
 
 /**
@@ -49,7 +49,7 @@ export const DetailView: React.FC<DetailViewProps> = ({
     maxTags = 3,
     onSeriesClick,
     onAuthorClick,
-  } = booksListProps
+  } = booksListProps;
 
   return (
     <>
@@ -59,9 +59,9 @@ export const DetailView: React.FC<DetailViewProps> = ({
         onBack={onBack}
         withPadding={withPadding}
       />
-      
+
       <Box sx={{ ...(withPadding && { px: 2 }) }}>
-        <BooksList 
+        <BooksList
           books={books}
           isLoading={isLoading}
           error={error}
@@ -73,5 +73,5 @@ export const DetailView: React.FC<DetailViewProps> = ({
         />
       </Box>
     </>
-  )
-}
+  );
+};

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 
 /**
  * Hook pro debounced hodnotu - optimalizuje vyhledávání
@@ -7,17 +7,17 @@ import { useState, useEffect } from 'react'
  * @returns Debounced hodnota
  */
 export const useDebounced = <T>(value: T, delay: number = 150): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+      setDebouncedValue(value);
+    }, delay);
 
     return () => {
-      clearTimeout(timer)
-    }
-  }, [value, delay])
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
 
-  return debouncedValue
-}
+  return debouncedValue;
+};

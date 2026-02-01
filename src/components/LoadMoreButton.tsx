@@ -1,24 +1,19 @@
-import React from 'react'
-import {
-  Box,
-  CircularProgress,
-  Button,
-  Typography,
-} from '@mui/material'
+import React from "react";
+import { Box, CircularProgress, Button, Typography } from "@mui/material";
 
 interface LoadMoreButtonProps {
   /** Zda probíhá načítání */
-  isLoading: boolean
+  isLoading: boolean;
   /** Callback pro načtení více položek */
-  onLoadMore: () => void
+  onLoadMore: () => void;
   /** Počet dalších položek k načtení */
-  remainingCount: number
+  remainingCount: number;
   /** Počet položek načtených za jednou */
-  pageSize: number
+  pageSize: number;
   /** Text pro tlačítko (nepovinné) */
-  loadingText?: string
+  loadingText?: string;
   /** Text pro tlačítko load more (nepovinné) */
-  loadMoreText?: string
+  loadMoreText?: string;
 }
 
 /**
@@ -30,34 +25,34 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   onLoadMore,
   remainingCount,
   pageSize,
-  loadingText = 'Načítání...',
+  loadingText = "Načítání...",
   loadMoreText,
 }) => {
   if (remainingCount <= 0) {
-    return null
+    return null;
   }
 
-  const itemsToLoad = Math.min(pageSize, remainingCount)
-  const defaultLoadMoreText = `Načíst dalších ${itemsToLoad} (${remainingCount} zbývá)`
+  const itemsToLoad = Math.min(pageSize, remainingCount);
+  const defaultLoadMoreText = `Načíst dalších ${itemsToLoad} (${remainingCount} zbývá)`;
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+    <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
       <Button
         variant="outlined"
         onClick={onLoadMore}
         disabled={isLoading}
         startIcon={isLoading ? <CircularProgress size={16} /> : undefined}
         sx={{
-          minWidth: '200px',
-          '&:disabled': {
+          minWidth: "200px",
+          "&:disabled": {
             opacity: 0.6,
           },
         }}
       >
         <Typography variant="body2" component="span">
-          {isLoading ? loadingText : (loadMoreText || defaultLoadMoreText)}
+          {isLoading ? loadingText : loadMoreText || defaultLoadMoreText}
         </Typography>
       </Button>
     </Box>
-  )
-}
+  );
+};
