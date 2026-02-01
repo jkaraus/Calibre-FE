@@ -3,20 +3,17 @@ import {
   Container,
   Typography,
   Box,
-  Divider,
-  IconButton,
 } from '@mui/material'
-import {
-  ArrowBack as ArrowBackIcon,
-} from '@mui/icons-material'
 import { useRecentBooks, useBooksCount, useAuthorsCount, useAllBooks, useAuthorBooks } from '../services/api'
 import BooksList from '../components/BooksList'
+import { DetailView } from '../components'
+import { formatBookDescription } from '../utils/localization'
 
 const Home: React.FC = () => {
   const [selectedSeries, setSelectedSeries] = useState<{authorId: number, seriesName: string} | null>(null)
   const [selectedAuthor, setSelectedAuthor] = useState<{authorId: number, authorName: string} | null>(null)
   
-  const { data: recentBooks, isLoading: booksLoading, error: booksError } = useRecentBooks({ limit: 9 })
+  const { data: recentBooks, isLoading: booksLoading, error: booksError } = useRecentBooks({ limit: 15 })
   const { data: allBooks, isLoading: allBooksLoading, error: allBooksError } = useAllBooks()
   const { data: booksCount } = useBooksCount()
   const { data: authorsCount } = useAuthorsCount()
@@ -93,59 +90,35 @@ const Home: React.FC = () => {
         </>
       ) : selectedSeries ? (
         // Detail view - knihy ze série
-        <>
-          <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <IconButton onClick={handleBackToHome} sx={{ mr: 2 }}>
-                <ArrowBackIcon />
-              </IconButton>
-              <Typography variant="h1" component="h1">
-                {selectedSeries.seriesName}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ ml: 2 }}>
-                všechny knihy ze série ({seriesBooks.length} {seriesBooks.length === 1 ? 'kniha' : seriesBooks.length < 5 ? 'knihy' : 'knih'})
-              </Typography>
-            </Box>
-            <Divider sx={{ mt: 2 }} />
-          </Box>
-
-          <BooksList 
-            books={seriesBooks}
-            isLoading={allBooksLoading}
-            error={allBooksError}
-            showLanguage={true}
-            maxDescriptionLength={200}
-            maxTags={3}
-          />
-        </>
+        <DetailView
+          title={selectedSeries.seriesName}
+          description={formatBookDescription("série", seriesBooks.length)}
+          onBack={handleBackToHome}
+          books={seriesBooks}
+          isLoading={allBooksLoading}
+          error={allBooksError}
+          booksListProps={{
+            showLanguage: true,
+            maxDescriptionLength: 200,
+            maxTags: 3,
+          }}
+        />
       ) : selectedAuthor ? (
         // Detail view - knihy vybraného autora
-        <>
-          <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <IconButton onClick={handleBackToHome} sx={{ mr: 2 }}>
-                <ArrowBackIcon />
-              </IconButton>
-              <Typography variant="h1" component="h1">
-                {selectedAuthor.authorName}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ ml: 2 }}>
-                všechny knihy autora ({authorBooks?.length || 0} {(authorBooks?.length === 1) ? 'kniha' : (authorBooks?.length && authorBooks.length < 5) ? 'knihy' : 'knih'})
-              </Typography>
-            </Box>
-            <Divider sx={{ mt: 2 }} />
-          </Box>
-
-          <BooksList 
-            books={authorBooks}
-            isLoading={isAuthorBooksLoading}
-            error={authorBooksError}
-            showLanguage={true}
-            maxDescriptionLength={200}
-            maxTags={3}
-            onSeriesClick={handleSeriesClick}
-          />
-        </>
+        <DetailView
+          title={selectedAuthor.authorName}
+          description={formatBookDescription("autora", authorBooks?.length || 0)}
+          onBack={handleBackToHome}
+          books={authorBooks}
+          isLoading={isAuthorBooksLoading}
+          error={authorBooksError}
+          booksListProps={{
+            showLanguage: true,
+            maxDescriptionLength: 200,
+            maxTags: 3,
+            onSeriesClick: handleSeriesClick,
+          }}
+        />
       ) : null}
     </Container>
   )
