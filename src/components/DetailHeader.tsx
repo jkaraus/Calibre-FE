@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Divider, IconButton } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 
 interface DetailHeaderProps {
@@ -24,7 +24,7 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({
   withPadding = false,
 }) => {
   return (
-    <Box sx={{ mb: 4, ...(withPadding && { px: 2 }) }}>
+    <Box sx={{ mb: 1, ...(withPadding && { px: 2 }) }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <IconButton onClick={onBack} sx={{ mr: 2 }}>
           <ArrowBackIcon />
@@ -36,7 +36,6 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({
           {description}
         </Typography>
       </Box>
-      <Divider sx={{ mt: 2 }} />
     </Box>
   );
 };

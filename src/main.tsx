@@ -8,7 +8,6 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 
@@ -16,7 +15,6 @@ import { queryClient } from "./services/queryClient";
 import { useTheme } from "./styles/theme";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import About from "./pages/About";
 import Books from "./pages/Books";
 import Authors from "./pages/Authors";
 
@@ -36,13 +34,6 @@ const indexRoute = createRoute({
   component: Home,
 });
 
-// Define about route
-const aboutRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/about",
-  component: About,
-});
-
 // Define books route
 const booksRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -58,12 +49,7 @@ const authorsRoute = createRoute({
 });
 
 // Create the route tree
-const routeTree = rootRoute.addChildren([
-  indexRoute,
-  aboutRoute,
-  booksRoute,
-  authorsRoute,
-]);
+const routeTree = rootRoute.addChildren([indexRoute, booksRoute, authorsRoute]);
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -83,7 +69,6 @@ export function App() {
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ThemeProvider>
   );

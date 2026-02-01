@@ -15,8 +15,8 @@ import {
   Paper,
 } from "@mui/material";
 import {
-  Person as PersonIcon,
   MenuBook as BookIcon,
+  Group as AuthorsIcon,
 } from "@mui/icons-material";
 import { useAllAuthors, useAuthorBooks, useAllBooks } from "../services/api";
 import { useAppStore } from "../store/appStore";
@@ -35,40 +35,40 @@ import type { Author } from "../types/author";
 const AuthorRow = React.memo<{
   author: Author;
   onSelect: (author: Author) => void;
-    }>(({ author, onSelect }) => (
-      <TableRow
-        onClick={() => onSelect(author)}
-        sx={{ cursor: "pointer", "&:hover": { backgroundColor: "action.hover" } }}
+}>(({ author, onSelect }) => (
+  <TableRow
+    onClick={() => onSelect(author)}
+    sx={{ cursor: "pointer", "&:hover": { backgroundColor: "action.hover" } }}
+  >
+    <TableCell component="th" scope="row">
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Typography variant="body2">{author.sort || author.name}</Typography>
+      </Box>
+    </TableCell>
+    <TableCell>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <BookIcon sx={{ mr: 1, fontSize: "small", color: "text.secondary" }} />
+        <Typography variant="body2">
+          {author.bookCount} {getBookCountText(author.bookCount)}
+        </Typography>
+      </Box>
+    </TableCell>
+    <TableCell>
+      <Typography
+        variant="body2"
+        color="primary.main"
+        sx={{ textDecoration: "underline" }}
       >
-        <TableCell component="th" scope="row">
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <PersonIcon sx={{ mr: 1, color: "primary.main" }} />
-            <Typography variant="body2">{author.sort || author.name}</Typography>
-          </Box>
-        </TableCell>
-        <TableCell>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <BookIcon sx={{ mr: 1, fontSize: "small", color: "text.secondary" }} />
-            <Typography variant="body2">
-              {author.bookCount} {getBookCountText(author.bookCount)}
-            </Typography>
-          </Box>
-        </TableCell>
-        <TableCell>
-          <Typography
-            variant="body2"
-            color="primary.main"
-            sx={{ textDecoration: "underline" }}
-          >
         Zobrazit knihy
-          </Typography>
-        </TableCell>
-      </TableRow>
-    ));
+      </Typography>
+    </TableCell>
+  </TableRow>
+));
 
 AuthorRow.displayName = "AuthorRow";
 
 const Authors: React.FC = () => {
+  const { isDarkMode } = useAppStore();
   const pageSize = 48; // Počet autorů načtených najednou
 
   const { data: authors, isLoading, error } = useAllAuthors();
@@ -255,23 +255,64 @@ const Authors: React.FC = () => {
   }
 
   return (
-    <Container maxWidth={false} sx={{ py: 4, px: 4 }}>
+    <Container
+      maxWidth="xl"
+      sx={{
+        py: { xs: 2, sm: 3, md: 4 },
+        px: { xs: 2, sm: 3, md: 4 },
+        maxWidth: { xs: "100%", lg: "1400px" },
+      }}
+    >
       {!selectedAuthor && !selectedSeries ? (
         // Master view - seznam autorů
         <>
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 1 }}>
             <Box
-              sx={{ display: "flex", alignItems: "baseline", gap: 2, mb: 2 }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                mb: 2,
+                flexWrap: "wrap",
+              }}
             >
-              <Typography variant="h1" component="h1">
+              <AuthorsIcon
+                sx={{
+                  fontSize: "2.5rem",
+                  color: isDarkMode ? "#ffffff" : "#1a202c",
+                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
+                }}
+              />
+              <Typography
+                variant="h1"
+                component="h1"
+                sx={{
+                  mb: 0,
+                  background: isDarkMode
+                    ? "linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)"
+                    : "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
                 Autoři
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {isLoading
-                  ? "Načítání..."
-                  : `Zobrazeno ${filteredAuthors?.length || 0} z ${totalCount} autorů`}
-              </Typography>
-              {isLoading && <CircularProgress size={16} />}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  ml: "auto",
+                }}
+              >
+                <Typography variant="body1" color="text.secondary">
+                  {isLoading
+                    ? "Načítání..."
+                    : `Zobrazeno ${filteredAuthors?.length || 0} z ${totalCount} autorů`}
+                </Typography>
+                {isLoading && <CircularProgress size={16} />}
+              </Box>
             </Box>
 
             <SearchInput
@@ -287,7 +328,21 @@ const Authors: React.FC = () => {
               <TableContainer component={Paper} sx={{ width: "100%" }}>
                 <Table sx={{ width: "100%" }} aria-label="authors table">
                   <TableHead>
-                    <TableRow>
+                    <TableRow
+                      sx={{
+                        background: isDarkMode
+                          ? "rgba(26, 26, 46, 0.9)"
+                          : "rgba(255, 255, 255, 0.95)",
+                        backdropFilter: "blur(15px)",
+                        borderBottom: isDarkMode
+                          ? "1px solid rgba(255,255,255,0.08)"
+                          : "1px solid rgba(0,0,0,0.08)",
+                        "& .MuiTableCell-head": {
+                          backgroundColor: "transparent",
+                          borderBottom: "none",
+                        },
+                      }}
+                    >
                       <TableCell>
                         <TableSortLabel
                           active={orderBy === "sort"}

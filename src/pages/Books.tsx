@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { Container, Typography, Box, CircularProgress } from "@mui/material";
+import { LibraryBooks as BooksIcon } from "@mui/icons-material";
 import { useAllBooks, useAuthorBooks } from "../services/api";
 import { useAppStore } from "../store/appStore";
 import BooksList from "../components/BooksList";
@@ -16,6 +17,7 @@ import type { Book } from "../types/book";
 
 const Books: React.FC = () => {
   const pageSize = 48; // Počet knih načtených najednou (dělitelné 3 kvůli layoutu)
+  const { isDarkMode } = useAppStore();
 
   const { data: books, isLoading, error } = useAllBooks();
   const {
@@ -126,23 +128,64 @@ const Books: React.FC = () => {
   }, [typedBooks, selectedSeries]);
 
   return (
-    <Container maxWidth={false} sx={{ py: 4, px: 4 }}>
+    <Container
+      maxWidth="xl"
+      sx={{
+        py: { xs: 2, sm: 3, md: 4 },
+        px: { xs: 2, sm: 3, md: 4 },
+        maxWidth: { xs: "100%", lg: "1400px" },
+      }}
+    >
       {!selectedSeries && !selectedAuthor ? (
         // Master view - seznam všech knih
         <>
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 1 }}>
             <Box
-              sx={{ display: "flex", alignItems: "baseline", gap: 2, mb: 2 }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                mb: 2,
+                flexWrap: "wrap",
+              }}
             >
-              <Typography variant="h1" component="h1">
+              <BooksIcon
+                sx={{
+                  fontSize: "2.5rem",
+                  color: isDarkMode ? "#ffffff" : "#1a202c",
+                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
+                }}
+              />
+              <Typography
+                variant="h1"
+                component="h1"
+                sx={{
+                  mb: 0,
+                  background: isDarkMode
+                    ? "linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)"
+                    : "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
                 Knihovna
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {isLoading
-                  ? "Načítání..."
-                  : `Zobrazeno ${filteredBooks?.length || 0} z ${totalCount} knih`}
-              </Typography>
-              {isLoading && <CircularProgress size={16} />}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  ml: "auto",
+                }}
+              >
+                <Typography variant="body1" color="text.secondary">
+                  {isLoading
+                    ? "Načítání..."
+                    : `Zobrazeno ${filteredBooks?.length || 0} z ${totalCount} knih`}
+                </Typography>
+                {isLoading && <CircularProgress size={16} />}
+              </Box>
             </Box>
 
             <SearchInput

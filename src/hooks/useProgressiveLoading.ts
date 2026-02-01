@@ -5,7 +5,7 @@ interface UseProgressiveLoadingProps {
   totalItems: number;
   /** Počet položek načtených za jednou (výchozí 48) */
   pageSize?: number;
-  /** Počáteční počet zobrazených položek (výchozí 20) */
+  /** Počáteční počet zobrazených položek (výchozí 21) */
   initialDisplayCount?: number;
   /** Vzdálenost od konce stránky pro spuštění načítání (výchozí 200px) */
   scrollThreshold?: number;
@@ -33,7 +33,7 @@ interface UseProgressiveLoadingReturn {
 export const useProgressiveLoading = ({
   totalItems,
   pageSize = 48,
-  initialDisplayCount = 20,
+  initialDisplayCount = 21,
   scrollThreshold = 200,
   enableInfiniteScroll = true,
   resetDeps = [],

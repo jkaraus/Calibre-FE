@@ -17,6 +17,7 @@ import {
   DateRange as DateIcon,
   Language as LanguageIcon,
 } from "@mui/icons-material";
+import { useAppStore } from "../store/appStore";
 import type { Book } from "../types/book";
 
 interface BooksListProps {
@@ -37,11 +38,12 @@ const BooksList: React.FC<BooksListProps> = ({
   error,
   showLanguage = false,
   maxDescriptionLength = 150,
-  maxTags = 2,
+  maxTags: _maxTags = 2,
   showFullComment = false,
   onSeriesClick,
   onAuthorClick,
 }) => {
+  const { isDarkMode } = useAppStore();
   const [expandedComments, setExpandedComments] = useState<Set<number>>(
     new Set(),
   );
@@ -58,7 +60,9 @@ const BooksList: React.FC<BooksListProps> = ({
     });
   };
   const formatDate = (dateString: string | null) => {
-    if (!dateString) {return "Neznámé";}
+    if (!dateString) {
+      return "Neznámé";
+    }
     return new Intl.DateTimeFormat("cs-CZ", {
       year: "numeric",
       month: "long",
@@ -67,7 +71,9 @@ const BooksList: React.FC<BooksListProps> = ({
   };
 
   const truncateText = (text: string | null | undefined, maxLength: number) => {
-    if (!text) {return "";}
+    if (!text) {
+      return "";
+    }
     const plainText = text.replace(/<[^>]*>/g, "");
     return plainText.length <= maxLength
       ? plainText
@@ -101,21 +107,35 @@ const BooksList: React.FC<BooksListProps> = ({
   }
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={2}>
       {books.map((book) => (
         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={book.id}>
-          <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
+          <Card
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "row",
+              boxShadow: isDarkMode
+                ? "0 8px 24px rgba(255, 255, 255, 0.08)"
+                : "0 8px 24px rgba(0, 0, 0, 0.08)",
+              border: isDarkMode
+                ? "2px solid rgba(255, 255, 255, 0.15)"
+                : "2px solid rgba(0, 0, 0, 0.12)",
+              borderRadius: 2,
+              p: 1.5,
+            }}
+          >
             {book.hasCover && (
               <CardMedia
                 component="img"
                 sx={{
-                  width: 140,
-                  height: 210,
+                  width: 135,
+                  height: 202,
                   objectFit: "cover",
                   bgcolor: "grey.100",
                   flexShrink: 0,
-                  m: 2,
-                  borderRadius: 2,
+                  m: 1,
+                  borderRadius: 1,
                 }}
                 image={`/api/book/cover/${book.id}`}
                 alt={`Cover obrázek pro ${book.title}`}
@@ -124,77 +144,111 @@ const BooksList: React.FC<BooksListProps> = ({
             <Box
               sx={{ display: "flex", flexDirection: "column", width: "100%" }}
             >
-              <CardContent sx={{ flexGrow: 1, p: 1.5 }}>
-                <Typography variant="h6" component="h3" sx={{ mb: 0.5 }}>
+              <CardContent sx={{ flexGrow: 1, p: 0.75 }}>
+                <Typography
+                  variant="h6"
+                  component="h3"
+                  sx={{
+                    mb: 0.25,
+                    fontSize: "1.1rem",
+                    fontWeight: 700,
+                    lineHeight: 1.3,
+                    color: "text.primary",
+                  }}
+                >
                   {book.title}
                 </Typography>
                 {book.seriesName && (
                   <Typography
                     variant="subtitle2"
-                    color="primary"
-                    sx={{
-                      mb: 0.5,
-                      cursor: onSeriesClick ? "pointer" : "default",
-                      textDecoration: onSeriesClick ? "underline" : "none",
-                      "&:hover": onSeriesClick
-                        ? {
-                          backgroundColor: "action.hover",
-                        }
-                        : {},
-                    }}
+                    component="span"
                     onClick={() =>
                       onSeriesClick &&
                       book.authors.length > 0 &&
                       onSeriesClick(book.authors[0].id, book.seriesName || "")
                     }
+                    sx={{
+                      mb: 0.25,
+                      mr: 0.5,
+                      cursor: onSeriesClick ? "pointer" : "default",
+                      color: isDarkMode ? "#ffffff" : "#000000",
+                      textDecoration: "underline",
+                      textUnderlineOffset: "3px",
+                      fontWeight: 600,
+                      "&:hover": {
+                        opacity: 0.8,
+                      },
+                      transition: "opacity 0.2s ease-in-out",
+                    }}
                   >
                     {book.seriesName} {book.seriesNumber}
                   </Typography>
                 )}
 
-                <Box sx={{ mb: 0.5 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 0.25 }}>
-                    <PersonIcon sx={{ mr: 1, fontSize: "small" }} />
-                    <Typography variant="body2">
-                      {book.authors.map((author, index) => (
-                        <React.Fragment key={author.id}>
-                          {index > 0 && ", "}
-                          <span
-                            style={{
-                              cursor: onAuthorClick ? "pointer" : "default",
-                              textDecoration: onAuthorClick
-                                ? "underline"
-                                : "none",
-                              color: onAuthorClick ? "primary.main" : "inherit",
-                            }}
-                            onClick={() =>
-                              onAuthorClick &&
-                              onAuthorClick(author.id, author.name)
-                            }
-                            onMouseEnter={(e) =>
-                              onAuthorClick &&
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "rgba(0, 0, 0, 0.04)")
-                            }
-                            onMouseLeave={(e) =>
-                              onAuthorClick &&
-                              ((e.target as HTMLElement).style.backgroundColor =
-                                "transparent")
-                            }
-                          >
-                            {author.name}
-                          </span>
-                        </React.Fragment>
-                      ))}
-                    </Typography>
+                <Box sx={{ mb: 0.25 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 0.25,
+                      flexWrap: "wrap",
+                      gap: 0.5,
+                    }}
+                  >
+                    <PersonIcon
+                      sx={{
+                        mr: 0.5,
+                        fontSize: "small",
+                        color: "text.secondary",
+                      }}
+                    />
+                    {book.authors.map((author, index) => (
+                      <React.Fragment key={author.id}>
+                        {index > 0 && (
+                          <span style={{ margin: "0 4px" }}>, </span>
+                        )}
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          onClick={() =>
+                            onAuthorClick &&
+                            onAuthorClick(author.id, author.name)
+                          }
+                          sx={{
+                            cursor: onAuthorClick ? "pointer" : "default",
+                            color: isDarkMode ? "#ffffff" : "#000000",
+                            textDecoration: "underline",
+                            textUnderlineOffset: "2px",
+                            fontWeight: 600,
+                            "&:hover": {
+                              opacity: 0.8,
+                            },
+                            transition: "opacity 0.2s ease-in-out",
+                          }}
+                        >
+                          {author.name}
+                        </Typography>
+                      </React.Fragment>
+                    ))}
                   </Box>
 
                   {book.publishDate && (
                     <Box
-                      sx={{ display: "flex", alignItems: "center", mb: 0.25 }}
+                      sx={{ display: "flex", alignItems: "center", mb: 0.5 }}
                     >
-                      <DateIcon sx={{ mr: 1, fontSize: "small" }} />
-                      <Typography variant="body2">
+                      <DateIcon
+                        sx={{
+                          mr: 0.5,
+                          fontSize: "small",
+                          color: "text.secondary",
+                        }}
+                      />
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                        }}
+                      >
                         {formatDate(book.publishDate)}
                       </Typography>
                     </Box>
@@ -202,33 +256,41 @@ const BooksList: React.FC<BooksListProps> = ({
 
                   {showLanguage && (
                     <Box
-                      sx={{ display: "flex", alignItems: "center", mb: 0.25 }}
+                      sx={{ display: "flex", alignItems: "center", mb: 0.5 }}
                     >
-                      <LanguageIcon sx={{ mr: 1, fontSize: "small" }} />
+                      <LanguageIcon
+                        sx={{
+                          mr: 0.5,
+                          fontSize: "small",
+                          color: "text.secondary",
+                        }}
+                      />
                       <Typography
                         variant="body2"
-                        sx={{ textTransform: "uppercase" }}
+                        sx={{
+                          color: "text.secondary",
+                        }}
                       >
-                        {book.language}
+                        {book.language?.toUpperCase()}
                       </Typography>
                     </Box>
                   )}
                 </Box>
 
                 {book.comments && (
-                  <Box sx={{ mb: 0.5 }}>
+                  <Box sx={{ mb: 0.25 }}>
                     {showFullComment || expandedComments.has(book.id) ? (
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        paragraph
+                        sx={{ mb: 0.5 }}
                         dangerouslySetInnerHTML={{ __html: book.comments }}
                       />
                     ) : (
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        paragraph
+                        sx={{ mb: 0.5 }}
                       >
                         {truncateText(book.comments, maxDescriptionLength)}
                       </Typography>
@@ -237,52 +299,77 @@ const BooksList: React.FC<BooksListProps> = ({
                       book.comments &&
                       book.comments.replace(/<[^>]*>/g, "").length >
                         maxDescriptionLength && (
-                      <Button
-                        size="small"
-                        onClick={() => toggleComment(book.id)}
-                        sx={{ p: 0, minWidth: "auto", textTransform: "none" }}
-                      >
-                        {expandedComments.has(book.id)
-                          ? "Zobrazit méně"
-                          : "Zobrazit více"}
-                      </Button>
-                    )}
+                        <Button
+                          size="small"
+                          onClick={() => toggleComment(book.id)}
+                          sx={{ p: 0, minWidth: "auto", textTransform: "none" }}
+                        >
+                          {expandedComments.has(book.id)
+                            ? "Zobrazit méně"
+                            : "Zobrazit více"}
+                        </Button>
+                      )}
                   </Box>
                 )}
 
                 {book.tags.length > 0 && (
-                  <Box sx={{ mb: 1 }}>
-                    {book.tags.slice(0, maxTags).map((tag, index) => (
+                  <Box sx={{ mb: 0.5 }}>
+                    {book.tags.map((tag, index) => (
                       <Chip
                         key={index}
                         label={tag}
                         size="small"
-                        sx={{ mr: 0.5, mb: 0.5 }}
+                        variant={tag === "READ" ? "filled" : "outlined"}
+                        sx={{
+                          mr: 0.5,
+                          mb: 0.5,
+                          ...(tag === "READ"
+                            ? {
+                                backgroundColor: "success.main",
+                                color: "success.contrastText",
+                              }
+                            : {
+                                borderColor: "text.primary",
+                                color: "text.primary",
+                              }),
+                        }}
                       />
                     ))}
-                    {book.tags.length > maxTags && (
-                      <Typography variant="caption" color="text.secondary">
-                        +{book.tags.length - maxTags}{" "}
-                        {maxTags === 2 ? "" : "dalších"}
-                      </Typography>
-                    )}
                   </Box>
                 )}
               </CardContent>
 
-              <CardActions>
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                  {book.formats.map((format) => (
-                    <Button
-                      key={format.id}
-                      size="small"
-                      variant="outlined"
-                      href={`/api/book/download/${book.id}/${format.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {format.type}
-                    </Button>
+              <CardActions sx={{ pt: 0, justifyContent: "flex-end" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1.5,
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                  }}
+                >
+                  {book.formats.map((format, index) => (
+                    <React.Fragment key={format.id}>
+                      {index > 0 && <span style={{ color: "#666" }}>•</span>}
+                      <Typography
+                        component="a"
+                        href={`/api/book/download/${book.id}/${format.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                          textDecoration: "underline",
+                          color: "primary.main",
+                          fontSize: "0.875rem",
+                          fontWeight: 500,
+                          "&:hover": {
+                            opacity: 0.8,
+                          },
+                          transition: "opacity 0.2s ease-in-out",
+                        }}
+                      >
+                        {format.type}
+                      </Typography>
+                    </React.Fragment>
                   ))}
                 </Box>
               </CardActions>

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Container, Typography, Box } from "@mui/material";
+import { AutoStories as HomeIcon } from "@mui/icons-material";
 import {
   useRecentBooks,
   useBooksCount,
@@ -7,11 +8,13 @@ import {
   useAllBooks,
   useAuthorBooks,
 } from "../services/api";
+import { useAppStore } from "../store/appStore";
 import BooksList from "../components/BooksList";
 import { DetailView } from "../components";
 import { formatBookDescription } from "../utils/localization";
 
 const Home: React.FC = () => {
+  const { isDarkMode } = useAppStore();
   const [selectedSeries, setSelectedSeries] = useState<{
     authorId: number;
     seriesName: string;
@@ -80,23 +83,61 @@ const Home: React.FC = () => {
   }, [allBooks, selectedSeries]);
 
   return (
-    <Container maxWidth={false} sx={{ py: 4, px: 4 }}>
+    <Container
+      maxWidth="xl"
+      sx={{
+        py: { xs: 2, sm: 3, md: 4 },
+        px: { xs: 2, sm: 3, md: 4 },
+        maxWidth: { xs: "100%", lg: "1400px" },
+      }}
+    >
       {!selectedSeries && !selectedAuthor ? (
         // Master view - nejnovější knihy
         <>
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 1 }}>
             <Box
-              sx={{ display: "flex", alignItems: "flex-start", gap: 2, mb: 2 }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                mb: 2,
+                flexWrap: "wrap",
+              }}
             >
-              <Typography variant="h1" component="h1">
-                Nejnovější knihy
+              <HomeIcon
+                sx={{
+                  fontSize: "2.5rem",
+                  color: isDarkMode ? "#ffffff" : "#1a202c",
+                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
+                }}
+              />
+              <Typography
+                variant="h1"
+                component="h1"
+                sx={{
+                  mb: 0,
+                  background: isDarkMode
+                    ? "linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)"
+                    : "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                Naposledy přidané knihy
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {booksCount || "..."} knih
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {authorsCount || "..."} autorů
-              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                  ml: "auto",
+                }}
+              >
+                <Typography variant="body1" color="text.secondary">
+                  {`${booksCount || "..."} knih, ${authorsCount || "..."} autorů`}
+                </Typography>
+              </Box>
             </Box>
           </Box>
 
