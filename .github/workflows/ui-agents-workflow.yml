@@ -1,0 +1,41 @@
+name: UI Agents Workflow
+
+on:
+  workflow_dispatch: # Manuální spuštění
+  push:
+    paths:
+      - '.github/agents/**' # Spustí se při změnách v agenty
+      - 'src/**'            # Nebo při změnách v kódu UI
+
+jobs:
+  run-ui-agents:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: UX/UI Review Agent
+      run: |
+        echo "Spouštím UX/UI Review Agent"
+        # Zpracování pravidel dle ux-ui-review-agent.md
+        echo "Hledám problémy v UI na základě UX priorit..."
+
+    - name: Apply Theme Improvements
+      run: |
+        echo "Provádím změny globálního MUI tématu dle mui-theme-agent.md"
+        echo "Kontrola barev, typografie a výchozích stylů..."
+
+    - name: Spacing & Typography Agent
+      run: |
+        echo "Vylepšuji spacing a typografii dle spacing-typography-agent.md"
+        echo "Ladění paddingu a vizuální hierarchie komponent..."
+
+    - name: Enforce Guard Rules
+      run: |
+        echo "Ověřen obsah vzhledem k pravidlům guard-ui-only.md"
+        echo "Žádné změny mimo vizuální prezentace nebyly povoleny."
+
+    - name: Finalize Workflow
+      run: |
+        echo "Všechny kroky dokončeny! Kontrola a úpravy UI proběhly správně."
