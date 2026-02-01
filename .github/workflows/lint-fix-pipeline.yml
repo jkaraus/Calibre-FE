@@ -1,0 +1,10 @@
+# Existing Lint Fix Pipeline Configurations
+
+- name: Check Node js Version
+  run: node --version
+
+- name: Clear npm cache
+  run: npm cache clean --force
+
+- name: Install all structured fixes
+  run: npm install --legacy-peer-deps
